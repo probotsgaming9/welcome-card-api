@@ -1,7 +1,7 @@
 const { createCanvas, loadImage } = require('canvas');
 const axios = require('axios');
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { username = 'Guest', avatar } = req.query;
 
   if (!avatar) {
@@ -49,4 +49,4 @@ module.exports = async (req, res) => {
     console.error(err);
     res.status(500).send('Failed to generate card');
   }
-};
+}
