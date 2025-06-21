@@ -1,7 +1,7 @@
 const { createCanvas, loadImage } = require('canvas');
 const axios = require('axios');
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   const { username = 'Guest', avatar } = req.query;
 
   if (!avatar) {
@@ -30,7 +30,13 @@ export default async function handler(req, res) {
 
     ctx.save();
     ctx.beginPath();
-    ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+    ctx.arc(
+      avatarX + avatarSize / 2,
+      avatarY + avatarSize / 2,
+      avatarSize / 2,
+      0,
+      Math.PI * 2
+    );
     ctx.closePath();
     ctx.clip();
     ctx.drawImage(avatarImg, avatarX, avatarY, avatarSize, avatarSize);
@@ -42,11 +48,13 @@ export default async function handler(req, res) {
     ctx.textAlign = 'center';
     ctx.fillText(`Welcome ${username}`, width / 2, avatarY + avatarSize + 50);
 
+    // Send PNG buffer (Vercel-friendly)
+    const buffer = canvas.toBuffer('image/png');
     res.setHeader('Content-Type', 'image/png');
-    canvas.createPNGStream().pipe(res);
+    res.send(buffer);
 
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to generate card');
   }
-}
+};
